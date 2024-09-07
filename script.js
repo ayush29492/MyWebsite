@@ -26,3 +26,28 @@ vlogPosts.forEach(vlog => {
     `;
     vlogContainer.appendChild(vlogEntry);
 });
+
+const analyticsData = document.getElementById('analytics-data');
+
+const ctx = document.createElement('canvas');
+analyticsData.appendChild(ctx);
+
+const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['January', 'February', 'March', 'April'],
+        datasets: [{
+            label: 'Viewers',
+            data: [10, 30, 50, 80],
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
