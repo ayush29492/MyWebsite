@@ -1,0 +1,26 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 0;
+    margin: 0;
+}
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+}
+nav a {
+    color: #fff;
+    margin: 0 1rem;
+    text-decoration: none;
+}
+section {
+    padding: 2rem;
+}
+#vlog-posts {
+    display: flex;
+    flex-direction: column;
+}
+.vlog-entry {
+    margin: 1rem 0;
+}
