@@ -1,53 +1,55 @@
-const vlogPosts = [
-    {
-        title: "Day 1 Vlog",
-        date: "2024-09-01",
-        content: "This is the content for Day 1 vlog.",
-        videoUrl: "https://www.youtube.com/embed/your-video-id"
-    },
-    {
-        title: "Day 2 Vlog",
-        date: "2024-09-02",
-        content: "This is the content for Day 2 vlog.",
-        videoUrl: "https://www.youtube.com/embed/your-video-id"
-    }
-];
+// app.js
 
-const vlogContainer = document.getElementById("vlog-posts");
+// Select the button and data container elements
+const fetchDataBtn = document.getElementById('fetchDataBtn');
+const dataContainer = document.getElementById('dataContainer');
 
-vlogPosts.forEach(vlog => {
-    const vlogEntry = document.createElement("div");
-    vlogEntry.className = "vlog-entry";
+// Notion API details
+const notionAPIKey = 'Bearer secret_p1lgOW4I19gDNJWYnWs0jtHR2grKLfVDCTWtH49bt2W';
+const databaseId = '871802c3c1bf43aab97795626d4dbd87';
 
-    vlogEntry.innerHTML = `
-        <h3>${vlog.title} - ${vlog.date}</h3>
-        <p>${vlog.content}</p>
-        <iframe width="560" height="315" src="${vlog.videoUrl}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    `;
-    vlogContainer.appendChild(vlogEntry);
-});
+// Event listener for the button
+fetchDataBtn.addEventListener('click', fetchNotionData);
 
-const analyticsData = document.getElementById('analytics-data');
+// Function to fetch data from Notion API
+async function fetchNotionData() {
+    try {
+        // Fetch data from the Notion API using a POST request
+        const response = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
+            method: 'POST',
+            headers: {
+                'Authorization': notionAPIKey,
+                'Notion-Version': '2022-06-28',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({}) // Empty body for querying all entries
+        });
 
-const ctx = document.createElement('canvas');
-analyticsData.appendChild(ctx);
-
-const chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ['January', 'February', 'March', 'April'],
-        datasets: [{
-            label: 'Viewers',
-            data: [10, 30, 50, 80],
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 2
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
+        if (!response.ok) {
+            throw new Error(`Error fetching data: ${response.statusText}`);
         }
+
+        // Parse the JSON data
+        const data = await response.json();
+        console.log(data); // Check the console for data structure
+        
+        // Clear previous data
+        dataContainer.innerHTML = '';
+
+        // Display the data on the page
+        displayData(data.results);
+    } catch (error) {
+        console.error('Error:', error);
+        dataContainer.textContent = 'Error fetching data from Notion API.';
     }
-});
+}
+
+// Function to display data in the HTML
+function displayData(data) {
+    data.forEach(item => {
+        const title = item.properties.Name.title[0].text.content; // Adjust based on your database structure
+        const entryElement = document.createElement('div');
+        entryElement.textContent = title;
+        dataContainer.appendChild(entryElement);
+    });
+}
